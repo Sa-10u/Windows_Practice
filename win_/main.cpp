@@ -95,14 +95,23 @@ int main()
 	SetFocus(h_wnd);
 	SetFocus(h_bg);
 
-	SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 255, LWA_ALPHA);
-
+	SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 0, LWA_ALPHA );
 	{
 
 		int alpha = 255;
 		MSG msg = {};
 
 		static auto st = std::chrono::system_clock::now();
+
+		for (int i = 0;i < GetSystemMetrics(SM_CYSCREEN);i++){
+
+			for (int j = 0;j < GetSystemMetrics(SM_CXSCREEN);j++) {
+
+				//  alpha
+			}
+		}
+
+		SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 255, LWA_ALPHA);
 
 		while (msg.message != WM_QUIT) {
 
