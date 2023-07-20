@@ -72,7 +72,7 @@ int main()
 
 	HWND h_bg = CreateWindowEx
 	(
-		NULL,
+		WS_EX_LAYERED,
 		white,
 		TEXT("aaa"),
 		WS_POPUP,
@@ -94,6 +94,8 @@ int main()
 
 	SetFocus(h_wnd);
 	SetFocus(h_bg);
+
+	SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 255, LWA_ALPHA);
 
 	{
 
@@ -138,10 +140,40 @@ int main()
 					SetWindowPos(h_wnd, NULL, x, y, sx, sy, SWP_NOZORDER);
 					RedrawWindow(h_wnd, NULL, NULL, RDW_FRAME);
 
-					if (alpha <= 0)	PostQuitMessage(0);
+					if (alpha <= 0)	break;
 				}
 			}
 		}
+
+		SetLayeredWindowAttributes(h_wnd, RGB(0, 0, 0), 0, LWA_ALPHA);
+
+		while (true) {
+			static int alpha = 255;
+
+			auto now = std::chrono::system_clock::now();
+			static auto last = now;
+
+			if (((now - last).count()) * 15.0 <= 1000 * 10000.0f)
+			{
+				continue;
+			}
+
+
+			if ((now - st).count() >= 1000 * 10000)
+			{
+				st = now;
+			}
+			last = now;
+
+			alpha-= 5;
+			
+
+			SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), alpha, LWA_ALPHA);
+
+			if (alpha <= 0)	break;
+		}
+		
 	}
 
+	return 0;
 }
