@@ -2,6 +2,8 @@
 #include<cstdlib>
 #include<chrono>
 
+#include <iostream>
+
 LPCWSTR name = TEXT("SAMPLE");
 LPCWSTR white = TEXT("BACKGROUND");
 
@@ -18,7 +20,6 @@ LRESULT WndProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp)
 
 int main()
 {
-
 	srand(time(NULL));
 
 	HINSTANCE h_ins = GetModuleHandle(NULL);
@@ -41,7 +42,7 @@ int main()
 	{
 		bg.cbSize = sizeof(bg);
 		bg.hInstance = h_ins;
-		bg.hbrBackground = CreateSolidBrush(RGB(255, 255, 255));
+		bg.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
 		bg.lpfnWndProc = WndProc;
 		bg.lpszClassName = white;
 		bg.lpszMenuName = nullptr;
@@ -49,7 +50,6 @@ int main()
 		bg.hCursor = LoadCursor(h_ins, IDC_ARROW);
 		bg.hIcon = LoadIcon(h_ins, IDI_ASTERISK);
 	}
-
 
 	RegisterClassEx(&wnd);
 	RegisterClassEx(&bg);
@@ -70,16 +70,19 @@ int main()
 		0
 	);
 
+	UINT winx = 900;
+	UINT winy = 300;
+
 	HWND h_bg = CreateWindowEx
 	(
 		WS_EX_LAYERED,
 		white,
 		TEXT("aaa"),
 		WS_POPUP,
-		0,
-		0,
-		GetSystemMetrics(SM_CXSCREEN),
-		GetSystemMetrics(SM_CYSCREEN),
+		(GetSystemMetrics(SM_CXSCREEN) - winx)/2,
+		(GetSystemMetrics(SM_CYSCREEN) - winy)/2,
+		winx,
+		winy,
 		nullptr,
 		nullptr,
 		h_ins,
@@ -92,26 +95,35 @@ int main()
 	UpdateWindow(h_wnd);
 	UpdateWindow(h_bg);
 
-	SetFocus(h_wnd);
+	SetFocus(h_wnd); 
+
+	SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 255, LWA_ALPHA);
 	SetFocus(h_bg);
 
-	SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 0, LWA_ALPHA );
 	{
 
 		int alpha = 255;
 		MSG msg = {};
+		auto dc_bg= GetDC(h_bg);
+		auto dc_mem = GetDC(NULL);
+		HBITMAP h_bm = CreateCompatibleBitmap(dc_mem, winx, winy);
 
 		static auto st = std::chrono::system_clock::now();
 
 		for (int i = 0;i < GetSystemMetrics(SM_CYSCREEN);i++){
-
+			std::cout << i;
 			for (int j = 0;j < GetSystemMetrics(SM_CXSCREEN);j++) {
+		
+			HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
+			RECT rc = { 0, 0, winx, winy };
+			FillRect(dc_mem, &rc, hBrush);
 
-				//  alpha
+			BitBlt(GetDC(h_wnd), 0, 0, winx, winy,dc_mem, 0, 0, SRCCOPY);
 			}
+			ShowWindow(h_wnd, SW_NORMAL);
 		}
 
-		SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), 255, LWA_ALPHA);
+		ReleaseDC(h_wnd, dc_bg);
 
 		while (msg.message != WM_QUIT) {
 
@@ -131,7 +143,6 @@ int main()
 				{
 					continue;
 				}
-				
 
 				if ((now - st).count() >= 1000 * 10000)
 				{
@@ -143,7 +154,7 @@ int main()
 					int y = rand() % 1000;
 					int sx = rand() % 200 + 50;
 					int sy = rand() % 200 + 50;
-					alpha--;
+					alpha-=6;
 
 					SetLayeredWindowAttributes(h_wnd, RGB(0,0,0), alpha, LWA_ALPHA);
 					SetWindowPos(h_wnd, NULL, x, y, sx, sy, SWP_NOZORDER);
@@ -178,11 +189,15 @@ int main()
 			
 
 			SetLayeredWindowAttributes(h_bg, RGB(0, 0, 0), alpha, LWA_ALPHA);
+			
 
 			if (alpha <= 0)	break;
 		}
-		
+
 	}
+
+	DestroyWindow(h_bg);
+	DestroyWindow(h_wnd);
 
 	return 0;
 }
