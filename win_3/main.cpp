@@ -219,14 +219,17 @@ int main()
 				//if (chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 3000)	break;
 			}
 
+			gra.SetCompositingMode(CompositingModeSourceCopy);
+
 			start = last = chrono::steady_clock::now();
 			while(chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 200) {
 
-				gra.Clear(Color(0, 0, 0));
 				gra.DrawImage(logo, -20, -200, logo->GetWidth(), logo->GetHeight());
 
 				last = chrono::steady_clock::now();
 			}
+
+
 
 			Sleep(150);
 
