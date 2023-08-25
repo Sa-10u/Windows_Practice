@@ -1,6 +1,7 @@
 #include<windows.h>
 #include<Gdiplus.h>
 #include<iostream>
+#include<chrono>
 
 #pragma comment(lib,"Gdiplus.lib")
 using namespace std;
@@ -33,6 +34,7 @@ int main()
 	int sx = 1920 * 0.5;
 	int sy = 1080 * 0.5;
 
+	ShowWindow(cui, SW_NORMAL);
 	{
 		auto com_1 = [&]() {cout << '.'; Sleep(1000);};
 		auto Command_1 = [&]() {com_1();com_1();com_1();};
@@ -78,7 +80,7 @@ int main()
 			(
 				WS_EX_LAYERED,
 				TEXT("backbone"),
-				L"aaa",
+				L"DAAA!",
 				WS_POPUP,
 				x,
 				y,
@@ -146,21 +148,31 @@ int main()
 			draw_3();
 		};
 
-		for (int i = 0; i < 100;i++) {
+		auto start = chrono::steady_clock::now();
+		auto last = chrono::steady_clock::now();
+
+		while(chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 2000){
 
 			DrawNoise();
 
+			last = chrono::steady_clock::now();
 		}
 
-		for (int i = 0; i < 60;i++) {
+		start = chrono::steady_clock::now();
+		last = chrono::steady_clock::now();
+
+		while(chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 2000) {
 			DrawNoise();
 
 			bool alp = rand() % 4;
 			int alpha = alp*255;
 			SetLayeredWindowAttributes(h_wnd, NULL, alpha, LWA_ALPHA);
 
+			last = chrono::steady_clock::now();
 		}
 		gra.Clear(Color(0, 0, 0));
+		SetLayeredWindowAttributes(h_wnd, NULL, 255, LWA_ALPHA);
+
 		{
 			Bitmap* logo = Bitmap::FromFile(L"Logo.png");
 			Color col;
@@ -177,7 +189,8 @@ int main()
 				}
 			}
 
-			for (int i = 0; i < 100;i++) {
+			start = last = chrono::steady_clock::now();
+			while(chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 3000) {
 				
 				gra.Clear(Color(0, 0, 0));
 				bg.Clear(NULL);
@@ -185,11 +198,14 @@ int main()
 				DrawNoise();
 
 				gra.DrawImage(logo, -20, -200, logo->GetWidth(), logo->GetHeight());
+
+				last = chrono::steady_clock::now();
 			}
 
 			gra.Clear(Color(0, 0, 0));
 			bg.Clear(NULL);
 
+			start = last = chrono::steady_clock::now();
 			for (int i = 0;i < 150;i++) {
 				
 				int rx = -20 +(rand() % 12 * (i / 30)) -6 ;
@@ -197,12 +213,19 @@ int main()
 
 				gra.Clear(Color(0, 0, 0));
 				gra.DrawImage(logo, rx, ry, logo->GetWidth(), logo->GetHeight());
+
+				last = chrono::steady_clock::now();
+
+				//if (chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 3000)	break;
 			}
 
-			for (int i = 0; i < 50;i++) {
+			start = last = chrono::steady_clock::now();
+			while(chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 200) {
 
 				gra.Clear(Color(0, 0, 0));
 				gra.DrawImage(logo, -20, -200, logo->GetWidth(), logo->GetHeight());
+
+				last = chrono::steady_clock::now();
 			}
 
 			Sleep(150);
