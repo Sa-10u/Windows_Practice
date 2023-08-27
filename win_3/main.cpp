@@ -176,6 +176,8 @@ int main()
 		{
 			Bitmap* logo = Bitmap::FromFile(L"Logo.png");
 			Color col;
+			col.SetValue(Color::MakeARGB(0, 0, 0, 0));
+			
 			for (int x = 0;x < logo->GetWidth();x++) {
 				for (int y = 0;y < logo->GetHeight();y++) {
 
@@ -183,7 +185,7 @@ int main()
 
 					if (col.GetR() == 0 && col.GetG() == 0 && col.GetB() == 0)
 					{
-						col.SetValue(Color::MakeARGB(0, 0, 0, 0));
+						
 						logo->SetPixel(x, y, col);
 					}
 				}
@@ -228,8 +230,56 @@ int main()
 
 				last = chrono::steady_clock::now();
 			}
+			Sleep(50);
 
 
+			Bitmap* school = Bitmap::FromFile(L"School_Logo_2.png");
+			for (int x = 0;x < school->GetWidth();x++) {
+				for (int y = 0;y < school->GetHeight();y++) {
+
+					school->GetPixel(x, y, &col);
+
+					if (col.GetR() == 0 && col.GetG() == 0 && col.GetB() == 0)
+					{
+						school->SetPixel(x, y, col);
+					}
+				}
+			}
+			auto DrawWLOGO_Noise = [&]() 
+			{
+				bool alp = rand() % 9;
+				
+				if(!alp)	gra.Clear(NULL);
+	
+				DrawNoise();
+				DrawNoise();
+
+				gra.DrawImage(logo, 0, -300, logo->GetWidth(), logo->GetHeight());
+				gra.DrawImage(school, 200, 200, 600, 400);
+			};
+
+			start = last = chrono::steady_clock::now();
+			while (chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 600) {
+
+				DrawWLOGO_Noise();
+				last = chrono::steady_clock::now();
+			}
+
+			start = last = chrono::steady_clock::now();
+			while (chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 500) {
+				
+				gra.Clear(NULL);
+
+				gra.DrawImage(logo, 0, -300, logo->GetWidth(), logo->GetHeight());
+				gra.DrawImage(school, 200, 200, 600, 400);
+
+				last = chrono::steady_clock::now();
+			}
+
+			start = last = chrono::steady_clock::now();
+			while (chrono::duration_cast<chrono::milliseconds>(last - start).count() <= 300) {
+				last = chrono::steady_clock::now();
+			}
 
 			Sleep(150);
 
