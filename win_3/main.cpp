@@ -30,9 +30,13 @@ int main()
 
 	auto cui = GetConsoleWindow();
 
+	SetConsoleTitle(L"Loading Information");
+
 	int x = 90; int y = 90;
 	int sx = 1920 * 0.5;
 	int sy = 1080 * 0.5;
+
+	MoveWindow(cui, x, y, sx, sy, true);
 
 	ShowWindow(cui, SW_NORMAL);
 	{
